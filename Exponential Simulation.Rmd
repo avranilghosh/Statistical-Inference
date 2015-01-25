@@ -1,0 +1,88 @@
+---
+title: ' Using exponential distribution in R to validate the Central Limit Theorem'
+author: "Avranil Ghosh"
+date: "Sunday, January 25, 2015"
+output: word_document
+---
+
+## Overview:
+
+In this project we will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be 
+simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 
+1/lambda. We set lambda = 0.2 for all of the simulations.
+
+### Analysing sample mean and comparing it to the theoretical mean of the distribution.
+
+Here we plot the histogram and density distribution of averages of 40 random exponentials simulated over 1000 times.
+
+```{r meansim,echo=FALSE,cache=FALSE}
+
+means = NULL
+for (i in 1 : 1000) 
+means = c(means, mean(rexp(40, 0.2)))
+mmns<-mean(means)
+mth<-1/0.2
+dty <- density(means)
+
+par(mfrow = c(1, 2))
+hist(means)
+plot(dty$x, dty$y, xlab = "", ylab = "density", type = "n")
+lines(dty$x, dty$y, lwd = 2)
+title("Distribution of means")
+abline(v=mmns, col="purple")
+abline(v=mth, col="blue")
+
+```
+
+The above figures illustrate that the mean of distribution of a large collection of averages of 40 exponentials that comes out to be `r mmns` is very close 
+to the actual population theoritical mean which is `r mth`. We can conclude that the average limits to what it is estimating  - the population mean.
+
+
+### Analysing sample variance and comparing it to the theoretical variance of the distribution.
+
+Here we plot the histogram and density distribution of variances of 40 random exponentials simulated over 1000 times.
+
+```{r sdsim,echo=FALSE,cache=FALSE}
+
+sdev = NULL
+for (i in 1 : 1000) 
+sdev = c(sdev, sd(rexp(40, 0.2)))
+variance<-sdev^2
+mvar<-mean(variance)
+sdevth<-1/0.2
+varth <- sdevth^2
+dtyvar <- density(variance)
+
+
+par(mfrow = c(1, 2))
+hist(variance)
+plot(dtyvar$x, dtyvar$y, xlab = "", ylab = "density", type = "n")
+lines(dtyvar$x, dtyvar$y, lwd = 2)
+title("Distribution of Variance")
+abline(v=mvar, col="purple")
+abline(v=varth, col="blue")
+
+```
+
+The above figures illustrate that the mean of distribution of a large collection of variances of 40 exponentials that comes out to be `r mvar` is very close 
+to the actual population theoritical variance which is `r varth`. 
+
+
+### Analysing the nature of the distribution.
+
+Here we plot the histogram of 1000 random exponential variables and compare it with the histogram of the averages of 40 random exponentials simulated over 
+1000 times.
+
+```{r dist,echo=FALSE,cache=FALSE}
+
+exponentials<-rexp(1000, 0.2)
+par(mfrow = c(1, 2))
+hist(exponentials)
+hist(means)
+
+```
+
+Here we see that although the original distribution of random exponentials is not normal, however the distribution of mean of averages assumes a normal bell 
+shapped distribution. The same is true for the distribution of mean of variances.
+
+

@@ -1,0 +1,127 @@
+---
+title: ' Analyzing Tooth growth through Statistical Inference'
+author: "Avranil Ghosh"
+date: "Sunday, January 25, 2015"
+output: word_document
+---
+
+## Overview:
+
+In this project we will analyse Tooth growth data using T-test to identify the different growth behaviour of Tooth under the effect of different doses and supp.
+
+### Loading data and analyzing summary statistics.
+
+Here we load the data from ToothGrowth dataset in R and analyse the summary in the whole dataset as well as for the different doses and supp.
+
+
+```{r loaddata,echo=FALSE,cache=FALSE}
+
+library(datasets)
+data(ToothGrowth)
+
+```
+
+The summary for the 2 supplementary are:
+
+```{r suppdata,echo=FALSE,cache=FALSE}
+
+suppD<-subset(ToothGrowth,select =c(len,supp))
+summary(suppD[suppD$supp=="OJ",1])
+summary(suppD[suppD$supp=="VC",1])
+
+```
+
+
+The above summary illustrates that the mean for supplementary "OJ" is more than the mean growth with supplementry "VC". However the distribution with "VC" is more spread out and wider as compared to "OJ" as can be been from max and min values from the respective statistics above.
+
+The summary for the 3 doses are:
+
+```{r dosedata,echo=FALSE,cache=FALSE}
+
+doseD<-subset(ToothGrowth,select =c(len,dose))
+summary(doseD[doseD$dose==0.5,1])
+summary(doseD[doseD$dose==1,1])
+summary(doseD[doseD$dose==2,1])
+
+```
+
+The above summary illustrates that the mean Tooth growth increases across doses 0.5,1 and 2 with minimum when dose 0.5 is administered and maximum when dose 2 is administered.
+
+### Hypothesis testing for growth with different supplementaries.
+
+Here we apply t test to identify if the difference in Tooth growth under the effect of the 2 different supplementaries "oJ" nd "VC" are statistically different at 95% confidence level. 
+
+Assumption: Variances for the two datasets given different supplements are unequal and the datasets are not paired.
+
+Lets formulate the below hypothesis:
+
+H0 : There is no significant change in growth when supplement "OJ" over "VC".
+
+H1 : There is a significant change in growth in the 95% confidence when supplement "OJ" is adminsitered over "VC".
+
+The T test summary is:
+
+```{r supptest,echo=FALSE,cache=FALSE}
+
+t.test(len~supp,paired= FALSE, var.equal=FALSE,data=suppD)
+confT<-qt(0.975,55.3)
+
+```
+
+The summary shows that T value for the sample is lower the T-statistic at 95% given by `r confT`.Hence the null hypothesis H0 cannot be rejected.This concluson is further strengthened by the p-value statistics which is more than 0.05 and suggests that null hypothesis cannot be rejected t 95% confidence level. Hence There is no significant change in growth when supplement "OJ" is administered  over "VC".
+
+
+### Hypothesis testing for growth with different doses.
+
+Here we apply t test to identify if the difference in Tooth growth under the effect of the 3 different doses "0.5", "1" and "2" are statistically different at 95% confidence level. 
+
+Assumption: Variances for the 3 datasets given different doses are unequal and the datasets are not paired.
+
+Lets formulate the below hypothesis:
+
+H0 : There is no significant change in growth for the 3 different doses "0.5", "1" and "2".
+
+H1 : There is a significant change in growth in the 95% confidence when dose "1" is adminsitered over "0.5".
+
+H2 : There is a significant change in growth in the 95% confidence when dose "2" is adminsitered over "0.5".
+
+H3 : There is a significant change in growth in the 95% confidence when dose "2" is adminsitered over "1".
+
+
+The T test summary for H1:
+
+```{r dosetest1,echo=FALSE,cache=FALSE}
+
+doseT<-doseD$dose %in% c(1,0.5)
+t.test(len~dose,paired= FALSE, var.equal=FALSE,data=doseD[doseT,])
+confdt1<-qt(0.975,37.9)
+
+```
+
+The summary shows that the absolute T value for the sample is higher the T-statistic at 95% given by `r confdt1`.Hence the null hypothesis H0 can be rejected.This concluson is further strengthened by the p-value statistics which is less than 0.05 and suggests that null hypothesis can be rejected t 95% confidence level. Hence There is a significant change in growth in the 95% confidence when dose "1" is adminsitered over "0.5".
+
+
+The T test summary for H2:
+
+```{r dosetest2,echo=FALSE,cache=FALSE}
+
+doseT<-doseD$dose %in% c(2,0.5)
+t.test(len~dose,paired= FALSE, var.equal=FALSE,data=doseD[doseT,])
+confdt2<-qt(0.975,36.9)
+
+```
+
+The summary shows that the absolute T value for the sample is higher the T-statistic at 95% given by `r confdt2`.Hence the null hypothesis H0 can be rejected.This concluson is further strengthened by the p-value statistics which is less than 0.05 and suggests that null hypothesis can be rejected t 95% confidence level. Hence There is a significant change in growth in the 95% confidence when dose "2" is adminsitered over "0.5".
+
+
+The T test summary for H3:
+
+```{r dosetest3,echo=FALSE,cache=FALSE}
+
+doseT<-doseD$dose %in% c(1,2)
+t.test(len~dose,paired= FALSE, var.equal=FALSE,data=doseD[doseT,])
+confdt3<-qt(0.975,37.1)
+
+```
+
+The summary shows that the absolute T value for the sample is higher the T-statistic at 95% given by `r confdt3`.Hence the null hypothesis H0 can be rejected.This concluson is further strengthened by the p-value statistics which is less than 0.05 and suggests that null hypothesis can be rejected t 95% confidence level. Hence There is a significant change in growth in the 95% confidence when dose "2" is adminsitered over "1".
